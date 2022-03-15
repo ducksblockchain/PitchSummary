@@ -1,5 +1,5 @@
-const OBGGovernance = artifacts.require("OBGGovernance");
+const SMTFaucet = artifacts.require("SMTFaucet");
 
 module.exports = function(deployer) {
-  deployer.deploy(OBGGovernance);
+  deployer.deploy(SMTFaucet);
 };

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Web3 from 'web3';
 import {ethers} from 'ethers';
 
-const ConnectButton = () => {
+const ConnectButton = (props) => {
 
   const [errorMessage, setErrorMessage] = useState(null);
   const [defaultAccount, setDefaultAccount] = useState(null);
@@ -28,13 +28,17 @@ const ConnectButton = () => {
   const getUserBalance = (address) => {
     window.ethereum.request({ method: 'eth_getBalance', params: [address, 'latest']})
     .then(balance => {
-        setUserBalance(ethers.utils.formatEther(balance));
+        setUserBalance(numberWithCommas(ethers.utils.formatEther(props.tokenBalance)));
         console.log(balance);
     })
   }
 
   const enableEthereum = () => {
     window.ethereum.request({ method: 'eth_requestAccount' })
+  }
+
+  function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   return (

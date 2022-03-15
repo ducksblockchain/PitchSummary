@@ -8,7 +8,9 @@ import PitchSummary from './1_PitchSummary.js';
 import PitchPage from './2_PitchPage.js';
 import GovernanceGuide from './3_GovernanceGuide.js';
 import Auction from './Auction.js';
-import OBGGovernance from '../abis/OBGGovernance.json';
+import Token from '../abis/Token.json';
+import SMTFaucet from '../abis/SMTFaucet.json';
+import {ethers} from 'ethers';
 
 class App extends Component {
 
@@ -24,14 +26,26 @@ class App extends Component {
       this.setState({ account: accounts[0] })
       console.log(this.state.account)
       const networkId = await web3.eth.net.getId()
-      const networkData = OBGGovernance.networks[networkId]
+      const networkData = SMTFaucet.networks[networkId]
       if(networkData) {
-        const obggovernance = new web3.eth.Contract(OBGGovernance.abi, networkData.address)
-        this.setState({ obggovernance })
+        const smtfaucet = new web3.eth.Contract(SMTFaucet.abi, networkData.address)
+        this.setState({ smtfaucet })
       }
     } else {
       window.alert("not connected")
     }
+  }
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      account: '',
+      tokenBalance: '0'
+    }
+  }
+
+  getVote = () => {
+    this.state.smtfaucet.methods.send().send({ from: this.state.account });
   }
 
   render() {
@@ -44,11 +58,12 @@ class App extends Component {
               <div className="content mr-auto ml-auto">
                   <img src={logo} style={{ width: '50%' }} className="App-logo" alt="logo" />
                 <h1>OBG DAO Starter Kit</h1>
+                <h2>{ ethers.utils.formatEther(this.state.tokenBalance) }</h2>
                 <div className='connectbutton'>
-                  <ConnectButton />
+                  <ConnectButton tokenBalance={this.state.tokenBalance} />
                 </div>
                 <div className='pitchsumwidget'>
-                  <PitchSummary />
+                  <PitchSummary account={this.state.account} tokenBalance={this.state.tokenBalance} />
                 </div>
                 <div className='pitchpagewidget'>
                   <PitchPage />
@@ -58,6 +73,9 @@ class App extends Component {
                 </div>
                 <div className='auctionwidget'>
                   <Auction />
+                  <button onClick={(event) => {
+                    this.getVote()
+                  }}>Hello</button>
                 </div>
               </div>
             </main>
